@@ -12,12 +12,12 @@ pipeline {
     stages {
         stage('Build JAR') {
             steps {
-                bat 'mvn clean package -DskipTests'
+                sh 'mvn clean package -DskipTests'
             }
         }
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t %IMAGE_NAME% .'
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
         stage('Login to DockerHub') {
@@ -27,27 +27,27 @@ pipeline {
                     usernameVariable: 'USER',
                     passwordVariable: 'PASS'
                 )]) {
-                    bat '''
+                    sh '''
                         docker logout
-                        docker login -u %USER% -p %PASS%
+                        docker login -u $USER -p $PASS
                     '''
                 }
             }
         }
         stage('Tag Image') {
             steps {
-                bat 'docker tag %IMAGE_NAME% %FULL_IMAGE%'
+                sh 'docker tag $IMAGE_NAME $FULL_IMAGE'
             }
         }
         stage('Push Image') {
             steps {
-                bat 'docker push %FULL_IMAGE%'
+                sh 'docker push $FULL_IMAGE'
             }
         }
         stage('Deploy with Docker Compose') {
             steps {
-                bat '''
-                    docker compose down -v
+                sh '''
+                    docker compose down -v || true
                     docker compose up -d --build
                 '''
             }
