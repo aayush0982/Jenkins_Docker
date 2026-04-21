@@ -8,8 +8,8 @@ pipeline {
 
     environment {
         IMAGE_NAME = "traineeapi"
-        DOCKERHUB_USER = "saxenaaayush9000"
-        FULL_IMAGE = "saxenaaayush9000/traineeapi:latest"
+        DOCKERHUB_USER = "saxenaaatush9000"
+        FULL_IMAGE = "saxenaaatush9000/traineeapi:latest"
     }
 
     stages {
