@@ -10,12 +10,12 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234567890
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   app:
-    build: .
+    image: saxenaaayush9000/traineeapi:latest
     container_name: spring-app
     restart: always
     depends_on:
