@@ -8,7 +8,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = "traineeapi"
-        DOCKERHUB_USER = "axenaaayush9000"
+        DOCKERHUB_USER = "aayush0982"
         CONTAINER_NAME = "traineeapi-container"
     }
 
@@ -16,17 +16,13 @@ pipeline {
 
         stage('Build JAR') {
             steps {
-                dir('Jenkins_Docker') {
-                    sh 'mvn clean package'
-                }
+                sh 'mvn clean package'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                dir('Jenkins_Docker') {
-                    sh 'docker build -t traineeapi .'
-                }
+                sh 'docker build -t traineeapi .'
             }
         }
 
