@@ -8,6 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entities.Trainee;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+private static final Logger logger =
+        LoggerFactory.getLogger(YourControllerClassName.class);
 
 @RestController
 public class TraineeController {
@@ -15,17 +20,45 @@ public class TraineeController {
 	@Autowired
 	private TraineeServices trs;
 
+	// @GetMapping("/trainees")
+	// public List<Trainee> fetchAllTrainee() {
+	// 	return trs.fetchAll();
+	// }
+
 	@GetMapping("/trainees")
-	public List<Trainee> fetchAllTrainee() {
-		return trs.fetchAll();
-	}
+public List<Trainee> fetchAllTrainee() {
 
-	@GetMapping("/trainees/{id}")
-	public Trainee fetchById(@PathVariable int id) {
-		Optional<Trainee> t = trs.fetchById(id);
-		return t.orElse(null);
-	}
+    logger.info("Request received to fetch all trainees");
 
+    List<Trainee> list = trs.fetchAll();
+
+    logger.info("Total trainees fetched: {}", list.size());
+
+    return list;
+}
+
+	// @GetMapping("/trainees/{id}")
+	// public Trainee fetchById(@PathVariable int id) {
+	// 	Optional<Trainee> t = trs.fetchById(id);
+	// 	return t.orElse(null);
+	// }
+
+
+@GetMapping("/trainees/{id}")
+public Trainee fetchById(@PathVariable int id) {
+
+    logger.info("Request received to fetch trainee with id: {}", id);
+
+    Optional<Trainee> t = trs.fetchById(id);
+
+    if (t.isPresent()) {
+        logger.info("Trainee found with id: {}", id);
+        return t.get();
+    } else {
+        logger.warn("Trainee NOT found with id: {}", id);
+        return null;
+    }
+}
 	@PostMapping("/trainees")
 	public String addTrainee(@RequestBody Trainee t) {
 		trs.addTrainee(t);
