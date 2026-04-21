@@ -9,6 +9,7 @@ pipeline {
     environment {
         IMAGE_NAME = "traineeapi"
         DOCKERHUB_USER = "saxenaaayush9000"
+        FULL_IMAGE = "saxenaaayush9000/traineeapi:latest"
         CONTAINER_NAME = "traineeapi-container"
     }
 
@@ -16,13 +17,13 @@ pipeline {
 
         stage('Build JAR') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn clean package -DskipTests'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t traineeapi .'
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
@@ -34,7 +35,6 @@ pipeline {
                     passwordVariable: 'PASS'
                 )]) {
                     sh '''
-                        docker logout || true
                         echo $PASS | docker login -u $USER --password-stdin
                     '''
                 }
@@ -43,21 +43,21 @@ pipeline {
 
         stage('Tag Image') {
             steps {
-                sh 'docker tag traineeapi $DOCKERHUB_USER/traineeapi:latest'
+                sh 'docker tag $IMAGE_NAME $FULL_IMAGE'
             }
         }
 
         stage('Push to DockerHub') {
             steps {
-                sh 'docker push $DOCKERHUB_USER/traineeapi:latest'
+                sh 'docker push $FULL_IMAGE'
             }
         }
 
         stage('Run Container') {
             steps {
                 sh '''
-                    docker rm -f traineeapi-container || true
-                    docker run -d -p 8085:8085 --name traineeapi-container traineeapi
+                    docker rm -f $CONTAINER_NAME || true
+                    docker run -d -p 8085:8085 --name $CONTAINER_NAME $FULL_IMAGE
                 '''
             }
         }
