@@ -1,61 +1,53 @@
 pipeline {
     agent any
-
     tools {
         maven 'Maven'
         jdk 'JDK17'
     }
-
     environment {
-        IMAGE_NAME = "traineeapi"
-        DOCKERHUB_USER = "saxenaaatush9000"
+        IMAGE_NAME = "saxenaaatush9000/traineeapi"
+        CONTAINER_NAME = "traineeapi-container"
         FULL_IMAGE = "saxenaaatush9000/traineeapi:latest"
     }
-
     stages {
-
         stage('Build JAR') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                bat 'mvn clean package -DskipTests'
             }
         }
-
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                bat 'docker build -t %IMAGE_NAME% .'
             }
         }
-
-        stage('Login DockerHub') {
+        stage('Login to DockerHub') {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'docker-hub-cred',
                     usernameVariable: 'USER',
                     passwordVariable: 'PASS'
                 )]) {
-                    sh '''
-                        echo $PASS | docker login -u $USER --password-stdin
+                    bat '''
+                        docker logout
+                        docker login -u %USER% -p %PASS%
                     '''
                 }
             }
         }
-
         stage('Tag Image') {
             steps {
-                sh 'docker tag $IMAGE_NAME $FULL_IMAGE'
+                bat 'docker tag %IMAGE_NAME% %FULL_IMAGE%'
             }
         }
-
         stage('Push Image') {
             steps {
-                sh 'docker push $FULL_IMAGE'
+                bat 'docker push %FULL_IMAGE%'
             }
         }
-
         stage('Deploy with Docker Compose') {
             steps {
-                sh '''
-                    docker compose down -v || true
+                bat '''
+                    docker compose down -v
                     docker compose up -d --build
                 '''
             }
