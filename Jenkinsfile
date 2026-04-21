@@ -5,9 +5,9 @@ pipeline {
         jdk 'JDK17'
     }
     environment {
-        IMAGE_NAME = "saxenaaatush9000/traineeapi"
+        IMAGE_NAME = "saxenaaayush9000/traineeapi"
         CONTAINER_NAME = "traineeapi-container"
-        FULL_IMAGE = "saxenaaatush9000/traineeapi:latest"
+        FULL_IMAGE = "saxenaaayush9000/traineeapi:latest"
     }
     stages {
         stage('Build JAR') {
