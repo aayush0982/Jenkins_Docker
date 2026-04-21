@@ -26,32 +26,37 @@ pipeline {
             }
         }
 
-        stage('Login to DockerHub') {
+        stage('Login DockerHub') {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'docker-hub-cred',
                     usernameVariable: 'USER',
                     passwordVariable: 'PASS'
                 )]) {
-                    sh 'echo $PASS | docker login -u $USER --password-stdin'
+                    sh '''
+                        echo $PASS | docker login -u $USER --password-stdin
+                    '''
                 }
             }
         }
 
-        stage('Tag & Push') {
+        stage('Tag Image') {
             steps {
-                sh '''
-                    docker tag $IMAGE_NAME $FULL_IMAGE
-                    docker push $FULL_IMAGE
-                '''
+                sh 'docker tag $IMAGE_NAME $FULL_IMAGE'
+            }
+        }
+
+        stage('Push Image') {
+            steps {
+                sh 'docker push $FULL_IMAGE'
             }
         }
 
         stage('Deploy with Docker Compose') {
             steps {
                 sh '''
-                    docker compose down || true
-                    docker compose up -d
+                    docker compose down -v || true
+                    docker compose up -d --build
                 '''
             }
         }
