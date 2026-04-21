@@ -8,7 +8,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = "traineeapi"
-        DOCKERHUB_USER = "aayush0982"
+        DOCKERHUB_USER = "saxenaaayush9000"
         CONTAINER_NAME = "traineeapi-container"
     }
 
